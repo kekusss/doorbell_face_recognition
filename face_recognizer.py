@@ -5,29 +5,31 @@ import os
 recognizer = cv2.face.LBPHFaceRecognizer_create()
 recognizer.read('Trainer/trainer.yml')
 cascadePath = "Cascades/haarcascade_frontalface_default.xml"
+# cascadePath = "Cascades/haarcascade_frontalface_alt2.xml"
 faceCascade = cv2.CascadeClassifier(cascadePath);
 font = cv2.FONT_HERSHEY_SIMPLEX
 
 def getNames():
     path = 'Users'
-    names = []
+    names = {}
     imagePaths = [os.path.join(path,f) for f in os.listdir(path)]
 
     for imagePath in imagePaths:
         id_and_name = os.path.split(imagePath)[-1].split("_")[1]
-        names.append(id_and_name.split("-")[1])
+        if not names.get(id_and_name.split("-")[0]):
+            names.update({id_and_name.split("-")[0]: id_and_name.split("-")[1]})
 
     return names
 
 #iniciate id counter
 id = 0
 
-names = getNames();
+names = getNames()
 
 # Initialize and start realtime video capture
 camera = cv2.VideoCapture(0)
-camera.set(3, 640) # video widht
-camera.set(4, 480) # video height
+camera.set(3, 1024) # video widht
+camera.set(4, 768) # video height
 
 # Define min window size to be recognized as a face
 minW = 0.1*camera.get(3)
@@ -36,7 +38,7 @@ minH = 0.1*camera.get(4)
 while True:
     ret, img = camera.read()
     
-    gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     
     faces = faceCascade.detectMultiScale( 
         gray,
@@ -51,7 +53,7 @@ while True:
 
         # Check if confidence is less them 100 ==> "0" is perfect match 
         if (confidence < 100):
-            name = names[id]
+            name = names.get(str(id))
             confidence = "  {0}%".format(round(100 - confidence))
         else:
             name = "unknown"

@@ -7,6 +7,7 @@ import os
 path = 'Users'
 recognizer = cv2.face.LBPHFaceRecognizer_create()
 detector = cv2.CascadeClassifier("Cascades/haarcascade_frontalface_default.xml")
+# detector = cv2.CascadeClassifier("Cascades/haarcascade_frontalface_alt2.xml")
 
 # function to get the images and label data
 def getDataSet(path):

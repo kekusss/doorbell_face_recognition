@@ -9,8 +9,8 @@ if len(sys.argv) != 2:
 face_name = sys.argv[1]
 
 camera = cv2.VideoCapture(0)
-camera.set(3, 640) # video width
-camera.set(4, 480) # video height
+camera.set(3, 1024) # video width
+camera.set(4, 768) # video height
 
 face_detector = cv2.CascadeClassifier('Cascades/haarcascade_frontalface_default.xml')
 
@@ -40,27 +40,26 @@ while(True):
 
     faces = face_detector.detectMultiScale(
         gray,     
-        scaleFactor=1.3,
-        minNeighbors=7,     
-        minSize=(20, 20)
+        scaleFactor=1.2,
+        minNeighbors=8,     
+        minSize=(200, 200)
     )
 
     for (x,y,w,h) in faces:
         count += 1
         cv2.rectangle(img, (x,y), (x+w,y+h), (255,0,0), 2)
         
-        if count % 10 == 0:
+        if count % 5 == 0:
             photos += 1
             cv2.imwrite("Users/User_" + str(id) + "-" + str(face_name) + '_' + str(photos) + ".jpg", gray[y:y+h, x:x+w])
             # todo turn on red light
 
-
         cv2.imshow('image', img)
 
-    k = cv2.waitKey(100) & 0xff # Press 'ESC' for exiting video
+    k = cv2.waitKey(5) & 0xff # Press 'ESC' for exiting video
     if k == 27:
         break
-    elif photos >= 10: # Take 10 face sample and stop video
+    elif photos >= 100: # Take 50 face sample and stop video
          break
         
 camera.release()
