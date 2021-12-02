@@ -1,6 +1,7 @@
 
 from flask import Flask, render_template, Response
 from doorbell_camera import DoorbellCamera
+from action_listener import ActionListener
 import imutils
 from imutils.video import VideoStream
 import threading
@@ -14,6 +15,10 @@ outputFrame = None
 lock = threading.Lock()
 stream = VideoStream(src=0).start()
 time.sleep(2.0)
+
+def listen():
+    action_listener = ActionListener()
+    action_listener.listen()
 
 def recognize_face():
     frameCount = 30
@@ -81,9 +86,14 @@ def camera():
 
 if __name__ == '__main__':
     # start a thread that will perform face recognition
-    t = threading.Thread(target=recognize_face)
-    t.daemon = True
-    t.start()
+    tr = threading.Thread(target=recognize_face)
+    tr.daemon = True
+    tr.start()
+
+    # start a thread that will listen for physical button pressed
+    tl = threading.Thread(target=listen)
+    tl.daemon = True
+    tl.start()
 
     # start the flask app
     app.run(host='0.0.0.0', port=8999, debug=False, threaded=True, use_reloader=False)

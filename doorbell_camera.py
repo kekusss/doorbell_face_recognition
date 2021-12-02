@@ -1,6 +1,7 @@
 import cv2
 import os
 import subprocess
+from api_controller import ApiController
 
 recognizer = cv2.face.LBPHFaceRecognizer_create()
 recognizer.read('Trainer/trainer.yml')
@@ -23,10 +24,10 @@ class DoorbellCamera(object):
         return names
 
     def __init__(self):
-
         # Define min window size to be recognized as a face
         self.minW = 200
         self.minH = 200
+        self.api_controller = ApiController()
 
         self.names = self.getNames()
     
@@ -46,10 +47,10 @@ class DoorbellCamera(object):
 
             confidence = round(100 - confidence)
 
-            if(confidence > 30):
-                command1 = subprocess.Popen(['./open.sh'])
+            if(confidence > 60):
+                self.api_controller.send_open()
 
-            if (confidence > 30):
+            if (confidence > 60):
                 name = self.names[str(id)]
                 confidence = "  {0}%".format(confidence)
             else:
