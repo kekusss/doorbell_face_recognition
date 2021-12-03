@@ -1,5 +1,6 @@
 
 from flask import Flask, render_template, Response
+from flask import jsonify
 from doorbell_camera import DoorbellCamera
 from action_listener import ActionListener
 import imutils
@@ -77,6 +78,17 @@ def generate():
 def index():    
     return render_template('index.html')
 
+@app.route("/snapshot")
+def snapshot():
+    global stream
+    frame = stream.read()
+    ts = int(time.time())
+    fileName = str(ts) + '.jpg'
+
+    cv2.imwrite('/home/pi/Pictures/Doorbell/' + fileName, frame)
+    data = {'name': fileName}
+    return jsonify(data), 200
+
 @app.route("/camera")
 def camera():
     # return the response generated along with the specific media
@@ -86,9 +98,9 @@ def camera():
 
 if __name__ == '__main__':
     # start a thread that will perform face recognition
-    tr = threading.Thread(target=recognize_face)
-    tr.daemon = True
-    tr.start()
+    t = threading.Thread(target=recognize_face)
+    t.daemon = True
+    t.start()
 
     # start a thread that will listen for physical button pressed
     tl = threading.Thread(target=listen)

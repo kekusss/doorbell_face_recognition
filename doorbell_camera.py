@@ -47,10 +47,10 @@ class DoorbellCamera(object):
 
             confidence = round(100 - confidence)
 
-            if(confidence > 60):
+            if(confidence > 50):
                 self.api_controller.send_open()
 
-            if (confidence > 60):
+            if (confidence > 50):
                 name = self.names[str(id)]
                 confidence = "  {0}%".format(confidence)
             else:
